@@ -2,25 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-/* small custom tweaks */
-:root {
-  --bg: #0b0b0b;
-  --muted: #9ca3af;
-}
-
-html, body, #__next {
-  height: 100%;
-}
-
-body {
-  background: var(--bg);
-  color: white;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-/* make blockquote style */
-blockquote {
-  border-left: 4px solid #FF7A00;
-  padding-left: 1rem;
+@layer base {
+  body {
+    @apply bg-background text-text-primary;
+  }
 }
