@@ -90,7 +90,7 @@ export default function HomePage() {
       {/* === Hero Section === */}
       <section className="relative h-[70vh] min-h-[500px] flex items-center">
         {/* Background Image: Configured in tailwind.config.js */}
-        <div className="absolute inset-0 bg-hero-pattern bg-cover bg-center opacity-30"></div>
+        <div className="absolute inset-0 bg-hero-pattern bg-cover bg-center opacity-80"></div>
         {/* Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-background via-background/50 to-transparent"></div>
         

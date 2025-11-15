@@ -46,7 +46,7 @@ module.exports = {
         },
       },
       backgroundImage: {
-        'hero-pattern': "url('/homepage-hero.jpg')", // Add your hero image path
+        'hero-pattern': "url('/dangote1.webp')", // Add your hero image path
       },
     },
   },
