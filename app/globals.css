@@ -1,5 +1,26 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* small custom tweaks */
+:root {
+  --bg: #0b0b0b;
+  --muted: #9ca3af;
+}
+
+html, body, #__next {
+  height: 100%;
+}
 
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* make blockquote style */
+blockquote {
+  border-left: 4px solid #FF7A00;
+  padding-left: 1rem;
 }
