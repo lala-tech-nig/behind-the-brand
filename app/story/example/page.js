@@ -41,7 +41,7 @@ export default function StoryPage() {
           {/* Hero Image */}
           <div className="relative w-full h-[60vh] rounded-lg overflow-hidden">
             <Image
-              src="/story-hero.jpg" // Add a hero image to your /public folder
+              src="/dangote1.webp" // Add a hero image to your /public folder
               alt={storyTitle}
               layout="fill"
               objectFit="cover"
