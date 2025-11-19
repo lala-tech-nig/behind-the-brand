@@ -43,6 +43,7 @@
 
 import Button from '@/components/Button';
 import StoryCard from '@/components/StoryCard';
+import StoryHighlights from '@/components/StoryHighlights';
 
 // Mock data for the story grid
 const stories = [
@@ -112,41 +113,7 @@ export default function HomePage() {
       </section>
 
       {/* === Story Highlights Section === */}
-      <section className="py-24">
-        <div className="container mx-auto max-w-6xl px-4">
-          <h2 className="text-3xl font-bold text-center mb-12">
-            Story Highlights
-          </h2>
-          <div className="bg-surface rounded-lg p-8 md:p-12">
-            <div className="space-y-8 divide-y divide-background">
-              {/* Highlight 1 */}
-              <div className="pt-8 first:pt-0">
-                <span className="text-primary font-bold">Key Lesson 1</span>
-                <p className="text-2xl text-text-primary mt-2">
-                  Embrace failure as a stepping stone, not a stumbling block.
-                  Every misstep is a lesson in disguise.
-                </p>
-              </div>
-              {/* Highlight 2 */}
-              <div className="pt-8">
-                <span className="text-primary font-bold">Key Lesson 2</span>
-                <p className="text-2xl text-text-primary mt-2">
-                  Your network is your net worth. Cultivate relationships
-                  built on mutual respect and shared vision.
-                </p>
-              </div>
-              {/* Highlight 3 */}
-              <div className="pt-8">
-                <span className="text-primary font-bold">Key Lesson 3</span>
-                <p className="text-2xl text-text-primary mt-2">
-                  Stay restlessly curious. The moment you stop learning is
-                  the moment you stop growing.
-                </p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
+      <StoryHighlights />
 
       {/* === Discover Our Collection === */}
       <section className="py-24">
