@@ -1,16 +1,20 @@
 'use client';
 
-import { useState, useRef } from 'react';
+import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { Search, Upload, X } from 'lucide-react';
+import { usePathname } from 'next/navigation';
+import { Search, X } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function Header() {
+  const pathname = usePathname();
+
   const navLinks = [
     { name: 'Stories', href: '/story' },
+    { name: 'Visions', href: '/vision' },
     { name: 'About', href: '/about' },
-    { name: 'Submit a Story', href: '#' },
+    { name: 'Tell a Story', href: '#' },
     { name: 'Histories', href: '/history' },
     { name: 'Documentaries', href: '/documentary' },
   ];
@@ -19,18 +23,15 @@ export default function Header() {
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState(false);
 
-  // Form fields
   const [form, setForm] = useState({
     name: '',
     email: '',
     phone: '',
   });
 
-  // Submit handler
   const handleSubscribe = (e) => {
     e.preventDefault();
 
-    // Launch confetti for 3 seconds
     const duration = 3000;
     const end = Date.now() + duration;
 
@@ -44,10 +45,7 @@ export default function Header() {
       if (Date.now() < end) requestAnimationFrame(frame);
     })();
 
-    // Close modal after submit
     setShowModal(false);
-
-    // Show toast
     setToast(true);
     setTimeout(() => setToast(false), 4000);
   };
@@ -58,7 +56,7 @@ export default function Header() {
       <header className="py-4 relative z-50">
         <nav className="container mx-auto max-w-6xl px-4 flex items-center justify-between relative">
 
-          {/* Logo */}
+          {/* LOGO */}
           <Link href="/" className="flex items-center">
             <Image
               src="/btblogo.png"
@@ -69,20 +67,31 @@ export default function Header() {
             />
           </Link>
 
-          {/* Center Nav */}
+          {/* CENTER NAV WITH ACTIVE UNDERLINE */}
           <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex gap-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                href={link.href}
-                className="text-text-secondary hover:text-white transition-colors text-sm font-medium"
-              >
-                {link.name}
-              </Link>
-            ))}
+            {navLinks.map((link) => {
+              const isActive = pathname === link.href;
+              return (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  className={`
+                    relative text-sm font-medium pb-1 transition 
+                    ${isActive ? 'text-[#FF7A00]' : 'text-text-secondary hover:text-white'}
+                  `}
+                >
+                  {link.name}
+
+                  {/* UNDERLINE */}
+                  {isActive && (
+                    <span className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#FF7A00] rounded-full"></span>
+                  )}
+                </Link>
+              );
+            })}
           </div>
 
-          {/* Right Section */}
+          {/* RIGHT SIDE */}
           <div className="flex items-center gap-4">
 
             {/* Search Toggle */}
@@ -100,13 +109,6 @@ export default function Header() {
               className="px-4 py-2 bg-[#FF7A00] text-black rounded-lg font-semibold hover:bg-[#e96c00] transition"
             >
               Subscribe
-            </button>
-
-            <button
-              aria-label="Upload"
-              className="text-text-secondary hover:text-white transition"
-            >
-              <Upload size={20} />
             </button>
           </div>
         </nav>
@@ -130,7 +132,6 @@ export default function Header() {
         <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex justify-center items-center z-50 animate-fadeIn">
           <div className="bg-[#111] p-8 rounded-2xl w-full max-w-md border border-neutral-700 relative animate-slideUp">
 
-            {/* Close Button */}
             <button
               onClick={() => setShowModal(false)}
               className="absolute top-4 right-4 text-neutral-400 hover:text-white"
@@ -138,9 +139,7 @@ export default function Header() {
               <X size={20} />
             </button>
 
-            <h2 className="text-xl font-bold text-white mb-6">
-              Subscribe to Story Updates
-            </h2>
+            <h2 className="text-xl font-bold text-white mb-6">Subscribe to Story Updates</h2>
 
             <form onSubmit={handleSubscribe} className="space-y-4">
               <input
@@ -173,7 +172,6 @@ export default function Header() {
                 Submit
               </button>
             </form>
-
           </div>
         </div>
       )}
@@ -185,7 +183,7 @@ export default function Header() {
         </div>
       )}
 
-      {/* Animation Styles */}
+      {/* ANIMATIONS */}
       <style jsx>{`
         .animate-fadeIn {
           animation: fadeIn 0.25s ease-out;
@@ -198,15 +196,15 @@ export default function Header() {
         }
         @keyframes fadeIn {
           from { opacity: 0; }
-          to   { opacity: 1; }
+          to { opacity: 1; }
         }
         @keyframes slideUp {
           from { transform: translateY(20px); opacity: 0; }
-          to   { transform: translateY(0); opacity: 1; }
+          to { transform: translateY(0); opacity: 1; }
         }
         @keyframes slideIn {
           from { transform: translateX(40px); opacity: 0; }
-          to   { transform: translateX(0); opacity: 1; }
+          to { transform: translateX(0); opacity: 1; }
         }
       `}</style>
     </>
