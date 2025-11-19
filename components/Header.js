@@ -8,9 +8,11 @@ import confetti from 'canvas-confetti';
 
 export default function Header() {
   const navLinks = [
-    { name: 'Stories', href: '#' },
-    { name: 'About', href: '#' },
+    { name: 'Stories', href: '/story' },
+    { name: 'About', href: '/about' },
     { name: 'Submit a Story', href: '#' },
+    { name: 'Histories', href: '/history' },
+    { name: 'Documentaries', href: '/documentary' },
   ];
 
   const [showSearch, setShowSearch] = useState(false);

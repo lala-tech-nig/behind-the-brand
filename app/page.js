@@ -42,6 +42,7 @@
 
 
 import Button from '@/components/Button';
+import StoriesPage from '@/components/StoriesPage';
 import StoryCard from '@/components/StoryCard';
 import StoryHighlights from '@/components/StoryHighlights';
 
@@ -105,7 +106,7 @@ export default function HomePage() {
               visionary, and builder. Discover the principles that defined a
               career and the real-life stories behind the success.
             </p>
-            <Button href="#" className="mt-8 text-lg">
+            <Button href="/story/1" className="mt-8 text-lg">
               Read The Full Story
             </Button>
           </div>
