@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
-import { Search, X } from 'lucide-react';
+import { Search, X, Menu } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function Header() {
@@ -22,6 +22,7 @@ export default function Header() {
   const [showSearch, setShowSearch] = useState(false);
   const [showModal, setShowModal] = useState(false);
   const [toast, setToast] = useState(false);
+  const [mobileMenu, setMobileMenu] = useState(false);
 
   const [form, setForm] = useState({
     name: '',
@@ -67,7 +68,7 @@ export default function Header() {
             />
           </Link>
 
-          {/* CENTER NAV WITH ACTIVE UNDERLINE */}
+          {/* DESKTOP NAV */}
           <div className="absolute left-1/2 -translate-x-1/2 hidden md:flex gap-10">
             {navLinks.map((link) => {
               const isActive = pathname === link.href;
@@ -75,14 +76,11 @@ export default function Header() {
                 <Link
                   key={link.name}
                   href={link.href}
-                  className={`
-                    relative text-sm font-medium pb-1 transition 
+                  className={`relative text-sm font-medium pb-1 transition 
                     ${isActive ? 'text-[#FF7A00]' : 'text-text-secondary hover:text-white'}
                   `}
                 >
                   {link.name}
-
-                  {/* UNDERLINE */}
                   {isActive && (
                     <span className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#FF7A00] rounded-full"></span>
                   )}
@@ -94,7 +92,7 @@ export default function Header() {
           {/* RIGHT SIDE */}
           <div className="flex items-center gap-4">
 
-            {/* Search Toggle */}
+            {/* SEARCH ICON */}
             <button
               aria-label="Search"
               onClick={() => setShowSearch((prev) => !prev)}
@@ -103,12 +101,20 @@ export default function Header() {
               <Search size={20} />
             </button>
 
-            {/* Subscribe Button */}
+            {/* SUBSCRIBE BUTTON */}
             <button
               onClick={() => setShowModal(true)}
-              className="px-4 py-2 bg-[#FF7A00] text-black rounded-lg font-semibold hover:bg-[#e96c00] transition"
+              className="hidden md:block px-4 py-2 bg-[#FF7A00] text-black rounded-lg font-semibold hover:bg-[#e96c00] transition"
             >
               Subscribe
+            </button>
+
+            {/* MOBILE HAMBURGER */}
+            <button
+              onClick={() => setMobileMenu(true)}
+              className="md:hidden text-white"
+            >
+              <Menu size={28} />
             </button>
           </div>
         </nav>
@@ -126,6 +132,58 @@ export default function Header() {
           </div>
         )}
       </header>
+
+      {/* MOBILE MENU OVERLAY */}
+      {mobileMenu && (
+        <div
+          onClick={() => setMobileMenu(false)}
+          className="fixed inset-0 bg-black/50 backdrop-blur-sm z-40 animate-fadeIn"
+        />
+      )}
+
+      {/* MOBILE SLIDE-IN MENU */}
+      <div className={`fixed top-0 right-0 w-72 h-full bg-[#111] border-l border-neutral-700 z-50 p-6 transform transition-transform duration-300
+        ${mobileMenu ? 'translate-x-0' : 'translate-x-full'}
+      `}>
+        {/* Close Button */}
+        <button
+          onClick={() => setMobileMenu(false)}
+          className="text-neutral-300 hover:text-white absolute top-6 right-6"
+        >
+          <X size={24} />
+        </button>
+
+        <nav className="mt-12 flex flex-col gap-6">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.name}
+                href={link.href}
+                onClick={() => setMobileMenu(false)}
+                className={`relative text-lg font-medium pb-1 transition 
+                  ${isActive ? 'text-[#FF7A00]' : 'text-neutral-300 hover:text-white'}
+                `}
+              >
+                {link.name}
+                {isActive && (
+                  <span className="absolute left-0 -bottom-1 w-full h-[2px] bg-[#FF7A00] rounded-full"></span>
+                )}
+              </Link>
+            );
+          })}
+
+          <button
+            onClick={() => {
+              setMobileMenu(false);
+              setShowModal(true);
+            }}
+            className="mt-4 w-full py-3 bg-[#FF7A00] text-black font-semibold rounded-lg"
+          >
+            Subscribe
+          </button>
+        </nav>
+      </div>
 
       {/* SUBSCRIBE MODAL */}
       {showModal && (
