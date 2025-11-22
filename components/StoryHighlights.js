@@ -57,50 +57,48 @@ export default function StoryHighlights() {
       <h2 className="text-3xl md:text-4xl font-bold text-white mb-8">
         Story Highlights
       </h2>
-
       {/* Container */}
-      <div className="w-full max-w-4xl bg-[#1a1a1a] border border-neutral-800 rounded-2xl p-0 overflow-hidden shadow-lg shadow-black/20">
+      <div className="w-full max-w-4xl bg-[#121212] border border-neutral-800 rounded-2xl overflow-hidden shadow-lg shadow-black/25">
 
         {/* Tabs */}
-        <div className="flex gap-10 px-6 pt-4 border-b border-neutral-700">
+        <div className="flex gap-6 px-6 pt-4 pb-3 border-b border-neutral-700 overflow-x-auto">
           {tabs.map((t) => (
             <button
               key={t}
               onClick={() => setActive(t)}
-              className={`pb-3 text-sm font-medium relative transition-all ${
-                active === t
-                  ? "text-white font-semibold"
-                  : "text-neutral-400 hover:text-white"
+              className={`relative px-1 text-sm transition-all whitespace-nowrap ${
+                active === t ? 'text-white font-semibold' : 'text-neutral-400 hover:text-white'
               }`}
             >
               {t}
-
-              {/* STRONG ORANGE UNDERLINE */}
               {active === t && (
-                <div className="absolute left-0 right-0 -bottom-[2px] h-[3px] bg-brand-500 rounded-full shadow-[0_0_6px_#FF7A00]"></div>
+                <div className="absolute left-0 right-0 -bottom-2 h-1.5 bg-[#FF7A00] rounded-full shadow-[0_0_10px_#FF7A00]/50"></div>
               )}
             </button>
           ))}
         </div>
 
         {/* Content */}
-        <div className="px-6 py-6">
+        <div className="px-5 py-6">
 
           {/* KEY LESSONS */}
-          {active === "Key Lessons" && (
-            <div className="space-y-8">
+          {active === 'Key Lessons' && (
+            <div className="space-y-4">
               {lessons.map((l, index) => (
                 <div
                   key={index}
-                  className="pb-4 border-b border-neutral-700 pl-3 border-l-4 border-brand-500/70 rounded-sm"
+                  className="p-4 bg-[#0f0f0f] rounded-xl border border-neutral-800 flex gap-4 items-start"
                 >
-                  <div className="grid grid-cols-3 md:grid-cols-4 gap-4">
-                    <p className="text-brand-500 text-sm font-semibold">
-                      {l.label}
-                    </p>
-                    <p className="text-neutral-200 text-sm col-span-2 md:col-span-3">
-                      {l.text}
-                    </p>
+                  {/* Left orange indicator */}
+                  <div className="flex-shrink-0 mt-1">
+                    <span className="block h-10 w-1.5 rounded-full bg-[#FF7A00] shadow-[0_0_10px_#FF7A00]" />
+                  </div>
+
+                  <div className="flex-1">
+                    <div className="flex items-center justify-between">
+                      <p className="text-[#FF7A00] text-sm font-semibold">{l.label}</p>
+                    </div>
+                    <p className="text-neutral-200 text-sm mt-2">{l.text}</p>
                   </div>
                 </div>
               ))}
@@ -108,42 +106,43 @@ export default function StoryHighlights() {
           )}
 
           {/* POWERFUL QUOTES */}
-          {active === "Powerful Quotes" && (
-            <div className="space-y-6">
+          {active === 'Powerful Quotes' && (
+            <div className="space-y-4">
               {quotes.map((q, i) => (
                 <div
                   key={i}
-                  className="p-4 bg-[#222] rounded-xl border border-neutral-700 relative"
+                  className="p-4 bg-[#0f0f0f] rounded-xl border border-neutral-800 flex gap-4 items-start"
                 >
-                  {/* ORANGE DOT ACCENT */}
-                  <div className="absolute left-3 top-3 h-2 w-2 rounded-full bg-brand-500 shadow-[0_0_8px_#FF7A00]"></div>
+                  <div className="flex-shrink-0 mt-1">
+                    <span className="block h-10 w-1.5 rounded-full bg-[#FF7A00] shadow-[0_0_10px_#FF7A00]" />
+                  </div>
 
-                  <p className="text-neutral-200 italic pl-6">"{q.quote}"</p>
-                  <p className="text-neutral-400 text-sm pl-6 mt-1">
-                    {q.author}
-                  </p>
+                  <div className="flex-1">
+                    <p className="text-neutral-200 italic text-sm">“{q.quote}”</p>
+                    <p className="text-neutral-400 text-sm mt-2">{q.author}</p>
+                  </div>
                 </div>
               ))}
             </div>
           )}
 
           {/* DEFINING MOMENT */}
-          {active === "Defining Moment" && (
-            <div className="space-y-6">
+          {active === 'Defining Moment' && (
+            <div className="space-y-4">
               {defining.map((d, i) => (
                 <div
                   key={i}
-                  className="p-5 bg-[#1e1e1e] rounded-xl border border-neutral-700"
+                  className="p-4 bg-[#0f0f0f] rounded-xl border border-neutral-800 flex gap-4 items-start"
                 >
-                  {/* ORANGE TITLE BADGE */}
-                  <span className="inline-block px-3 py-1 mb-2 text-xs font-semibold text-black bg-brand-500 rounded-full shadow-[0_0_10px_#FF7A00]">
-                    Highlight
-                  </span>
+                  <div className="flex-shrink-0 mt-1">
+                    <span className="block h-10 w-1.5 rounded-full bg-[#FF7A00] shadow-[0_0_10px_#FF7A00]" />
+                  </div>
 
-                  <h3 className="text-white font-semibold text-lg">
-                    {d.title}
-                  </h3>
-                  <p className="text-neutral-300 text-sm mt-1">{d.desc}</p>
+                  <div className="flex-1">
+                    <span className="inline-block px-3 py-1 mb-2 text-xs font-semibold text-black bg-[#FF7A00] rounded-full shadow-[0_0_8px_#FF7A00]">Highlight</span>
+                    <h3 className="text-white font-semibold text-lg">{d.title}</h3>
+                    <p className="text-neutral-300 text-sm mt-2">{d.desc}</p>
+                  </div>
                 </div>
               ))}
             </div>
