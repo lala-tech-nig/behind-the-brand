@@ -1,7 +1,7 @@
 import Image from "next/image";
-import AuthorHeader from "../../../components/AuthorHeader";
-import StoryCard from "../../../components/StoryCard";
-import Timeline from "../../../components/Timeline";
+import AuthorHeader from "../../components/AuthorHeader";
+import StoryCard from "../../components/StoryCard";
+import Timeline from "../../components/Timeline";
 
 export default function AuthorProfile() {
   return (
