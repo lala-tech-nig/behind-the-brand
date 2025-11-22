@@ -1,22 +1,8 @@
 'use client';
 
 import { useEffect, useMemo, useRef, useState } from 'react';
-import Image from 'next/image';
 import { motion } from 'framer-motion';
 import confetti from 'canvas-confetti';
-
-/**
- * Vision Page with:
- * - filters & categories
- * - featured carousel
- * - submit modal
- * - load more pagination
- * - confetti + toast on submit
- *
- * NOTE: The component references an uploaded file at:
- * /mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png
- * (Your tooling will convert that local path to a URL).
- */
 
 export default function Page() {
   // --- sample dataset (would come from API normally) ---
@@ -29,6 +15,8 @@ export default function Page() {
         date: 'Jan 12, 2025',
         category: 'Tech',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Adebayo loves solving problems with code and wants to build tools tailored to local needs.',
+        background: 'Grew up in a small town tinkering with phones and old computers. Saw local businesses struggle without simple software tools.',
       },
       {
         id: 2,
@@ -37,6 +25,8 @@ export default function Page() {
         date: 'Feb 02, 2025',
         category: 'Film',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Chiamaka explores identity and community in short films and hopes to amplify unheard voices.',
+        background: 'Studied theatre in school; began recording local events and realised film could stretch empathy.',
       },
       {
         id: 3,
@@ -45,6 +35,8 @@ export default function Page() {
         date: 'Feb 14, 2025',
         category: 'Health',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Yusuf focuses on genetics and hopes to make diagnostics more accessible across Africa.',
+        background: 'Lost a cousin to a condition that could not be diagnosed locally; motivated to change that.',
       },
       {
         id: 4,
@@ -53,6 +45,8 @@ export default function Page() {
         date: 'Mar 02, 2025',
         category: 'Energy',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Amina wants sustainable tech that fits rural realities: durable, affordable, and maintainable.',
+        background: 'Family used kerosene lamps; inspired to find safer lighting solutions during engineering club.',
       },
       {
         id: 5,
@@ -61,6 +55,8 @@ export default function Page() {
         date: 'Mar 10, 2025',
         category: 'Finance',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Tunde wants to simplify payments and credit for informal businesses.',
+        background: 'Worked at a market stall and saw how hard it was to access small loans and digital payments.',
       },
       {
         id: 6,
@@ -69,8 +65,9 @@ export default function Page() {
         date: 'Mar 22, 2025',
         category: 'Education',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Ngozi runs after-school coding clubs and wants to bring structured curricula to remote areas.',
+        background: 'Volunteered to teach children in weekend classes; noticed a big skills gap that could be bridged early.',
       },
-      // more sample entries (you can seed more)
       {
         id: 7,
         name: 'Samuel K.',
@@ -78,6 +75,8 @@ export default function Page() {
         date: 'Apr 04, 2025',
         category: 'Agriculture',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Samuel wants to connect farmers to markets and share weather and best-practice tips.',
+        background: 'Grew up on a farm; saw middlemen capture most value and wants to change that with tech.',
       },
       {
         id: 8,
@@ -86,6 +85,8 @@ export default function Page() {
         date: 'Apr 11, 2025',
         category: 'Arts',
         thumb: '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+        about: 'Fatima wants to give artists the tools to sell work and collaborate across cities.',
+        background: 'Organised street performances as a teen and saw talent with no distribution channels.',
       },
     ],
     []
@@ -101,8 +102,11 @@ export default function Page() {
   const [data, setData] = useState(initialVisions);
   const [activeCategory, setActiveCategory] = useState('All');
   const [query, setQuery] = useState('');
-  const [visibleCount, setVisibleCount] = useState(6); // pagination
+  // pagination: page size + current page
+  const [pageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
   const [modalOpen, setModalOpen] = useState(false);
+  const [selectedStory, setSelectedStory] = useState(null);
   const [toast, setToast] = useState(null);
   const [submitting, setSubmitting] = useState(false);
 
@@ -113,7 +117,7 @@ export default function Page() {
 
   useEffect(() => {
     slideInterval.current = setInterval(() => {
-      setSlideIdx((i) => (i + 1) % featured.length);
+      setSlideIdx((i) => (i + 1) % Math.max(1, featured.length));
     }, 4500);
     return () => clearInterval(slideInterval.current);
   }, [featured.length]);
@@ -126,8 +130,9 @@ export default function Page() {
     return true;
   });
 
-  // visible list (pagination / load more)
-  const visibleList = filtered.slice(0, visibleCount);
+  // visible list (pagination)
+  const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const visibleList = filtered.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   // submit new vision
   const [form, setForm] = useState({
@@ -136,10 +141,6 @@ export default function Page() {
     category: '',
     thumb: '',
   });
-
-  function validEmailLike(text) {
-    return text && text.length > 2;
-  }
 
   function launchConfetti() {
     const duration = 1200;
@@ -173,6 +174,8 @@ export default function Page() {
       date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }),
       category: form.category,
       thumb: form.thumb || '/mnt/data/a3215c34-4e38-412c-89d3-336411a809a5.png',
+      about: form.title ? `About ${form.name}: ${form.title}` : '',
+      background: '',
     };
     setData((d) => [newItem, ...d]);
     setForm({ name: '', title: '', category: '', thumb: '' });
@@ -183,38 +186,36 @@ export default function Page() {
     setTimeout(() => setToast(null), 4500);
   }
 
-  // load more handler
-  function loadMore() {
-    setVisibleCount((c) => c + 6);
-  }
-
-  // infinite scroll (optional) - here, if near bottom, load more
+  // reset page when filters/search change
   useEffect(() => {
-    function onScroll() {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 600) {
-        // near bottom
-        if (visibleCount < filtered.length) {
-          setVisibleCount((c) => Math.min(c + 6, filtered.length));
-        }
+    setCurrentPage(1);
+  }, [activeCategory, query]);
+
+  // close modal on Escape
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') {
+        setSelectedStory(null);
+        setModalOpen(false);
       }
     }
-    window.addEventListener('scroll', onScroll, { passive: true });
-    return () => window.removeEventListener('scroll', onScroll);
-  }, [visibleCount, filtered.length]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   return (
     <div className="min-h-screen bg-black text-white">
       {/* HERO */}
-      <header className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+      <header className="relative h-[52vh] sm:h-[60vh] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-[#050505] via-[#0b0b0b] to-[#050505]" />
         <div className="relative z-10 max-w-4xl text-center px-6">
-          <h1 className="text-4xl md:text-6xl font-extrabold mb-4 text-[#FF7A00]">Vision Gallery</h1>
-          <p className="text-lg text-neutral-300 max-w-2xl mx-auto">
+          <h1 className="text-3xl sm:text-4xl md:text-6xl font-extrabold mb-4 text-[#FF7A00]">Vision Gallery</h1>
+          <p className="text-base sm:text-lg text-neutral-300 max-w-2xl mx-auto">
             Young people imagining tomorrow — short, powerful visions from youths who want to change the world.
             Browse categories, filter, or submit your own vision.
           </p>
 
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 items-center justify-center">
+          <div className="mt-6 flex flex-col sm:flex-row gap-3 items-center justify-center">
             <button
               onClick={() => setModalOpen(true)}
               className="px-5 py-3 rounded-lg bg-[#FF7A00] text-black font-semibold shadow-md hover:bg-[#e86a00] transition"
@@ -222,18 +223,18 @@ export default function Page() {
               Submit Your Vision
             </button>
 
-            <div className="mt-2 sm:mt-0 sm:ml-4 flex items-center gap-3">
+            <div className="mt-2 sm:mt-0 sm:ml-4 flex flex-col sm:flex-row items-center gap-3">
               <input
                 value={query}
-                onChange={(e) => { setQuery(e.target.value); setVisibleCount(6); }}
+                onChange={(e) => { setQuery(e.target.value); setCurrentPage(1); }}
                 placeholder="Search by name, keyword or category..."
-                className="px-4 py-3 rounded-xl bg-[#0e0e0e] border border-neutral-800 text-white placeholder-neutral-500 focus:ring-2 focus:ring-[#FF7A00] outline-none w-72"
+                className="px-4 py-3 rounded-xl bg-[#0e0e0e] border border-neutral-800 text-white placeholder-neutral-500 focus:ring-2 focus:ring-[#FF7A00] outline-none w-full sm:w-72"
               />
-              <div className="flex gap-2 flex-wrap">
+              <div className="flex gap-2 flex-wrap justify-center">
                 {categories.map((c) => (
                   <button
                     key={c}
-                    onClick={() => { setActiveCategory(c); setVisibleCount(6); }}
+                    onClick={() => { setActiveCategory(c); setCurrentPage(1); }}
                     className={`text-sm px-3 py-2 rounded-full transition ${
                       activeCategory === c
                         ? 'bg-[#FF7A00] text-black'
@@ -250,33 +251,33 @@ export default function Page() {
       </header>
 
       {/* FEATURED CAROUSEL */}
-      <section className="container mx-auto max-w-6xl px-6 py-12">
+      <section className="container mx-auto max-w-6xl px-6 py-8 sm:py-12">
         <h2 className="text-2xl font-bold mb-4">Featured Visions</h2>
 
         <div className="relative rounded-2xl overflow-hidden border border-neutral-800 bg-gradient-to-b from-[#0b0b0b] to-[#0d0d0d]">
-          <div className="relative w-full h-64 sm:h-80">
+          <div className="relative w-full h-56 sm:h-64 md:h-80">
             <img
               src={featured[slideIdx]?.thumb}
               alt={`Featured ${slideIdx + 1}`}
               className="w-full h-full object-cover"
             />
-            <div className="absolute left-6 bottom-6 bg-black/60 px-4 py-2 rounded-full border border-white/6">
+            <div className="absolute left-4 sm:left-6 bottom-6 bg-black/60 px-4 py-2 rounded-full border border-white/6 max-w-[90%]">
               <div className="text-xs text-[#FF7A00] font-semibold">Featured</div>
-              <div className="text-white font-bold">{featured[slideIdx]?.name}</div>
-              <div className="text-sm text-neutral-300">{featured[slideIdx]?.title}</div>
+              <div className="text-white font-bold truncate">{featured[slideIdx]?.name}</div>
+              <div className="text-sm text-neutral-300 truncate">{featured[slideIdx]?.title}</div>
             </div>
           </div>
 
           {/* controls */}
           <div className="absolute right-4 top-1/2 -translate-y-1/2 flex flex-col gap-2">
             <button
-              onClick={() => setSlideIdx((i) => (i - 1 + featured.length) % featured.length)}
+              onClick={() => setSlideIdx((i) => (i - 1 + featured.length) % Math.max(1, featured.length))}
               className="bg-black/50 hover:bg-black/40 px-3 py-2 rounded-md border border-white/6"
             >
               ‹
             </button>
             <button
-              onClick={() => setSlideIdx((i) => (i + 1) % featured.length)}
+              onClick={() => setSlideIdx((i) => (i + 1) % Math.max(1, featured.length))}
               className="bg-black/50 hover:bg-black/40 px-3 py-2 rounded-md border border-white/6"
             >
               ›
@@ -286,19 +287,20 @@ export default function Page() {
       </section>
 
       {/* GRID LIST */}
-      <main className="container mx-auto max-w-6xl px-6 pb-28">
+      <main className="container mx-auto max-w-6xl px-4 sm:px-6 pb-28">
         <h2 className="text-2xl font-bold mb-6">Stories of Tomorrow</h2>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
           {visibleList.map((v) => (
             <motion.article
               key={v.id}
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6 }}
-              className="bg-[#0f0f0f] rounded-xl overflow-hidden border border-neutral-800 shadow-md hover:shadow-xl transition transform"
+              className="bg-[#0f0f0f] rounded-xl overflow-hidden border border-neutral-800 shadow-md hover:shadow-xl transition transform cursor-pointer"
+              onClick={() => { setSelectedStory(v); setModalOpen(true); }}
             >
-              <div className="relative h-44 w-full">
+              <div className="relative h-44 sm:h-52 w-full">
                 <img src={v.thumb} alt={v.name} className="w-full h-full object-cover" />
               </div>
               <div className="p-5">
@@ -313,8 +315,8 @@ export default function Page() {
                   <span className="text-xs bg-white/5 text-white/90 px-3 py-1 rounded-full">{v.category}</span>
                   <button
                     className="text-sm text-[#FF7A00] font-medium"
-                    onClick={() => {
-                      // quick "save" interaction visual
+                    onClick={(e) => {
+                      e.stopPropagation();
                       setToast({ type: 'info', message: `Saved "${v.name}" to your list` });
                       setTimeout(() => setToast(null), 2500);
                     }}
@@ -327,23 +329,41 @@ export default function Page() {
           ))}
         </div>
 
-        {/* Load more */}
-        <div className="mt-10 flex justify-center">
-          {visibleCount < filtered.length ? (
-            <button
-              onClick={loadMore}
-              className="px-6 py-3 bg-[#FF7A00] text-black rounded-lg font-semibold hover:bg-[#e86a00] transition"
-            >
-              Load more
-            </button>
-          ) : (
-            <div className="text-sm text-neutral-500">No more items</div>
-          )}
+        {/* Pagination controls */}
+        <div className="mt-8 flex items-center justify-center gap-3 flex-wrap">
+          <button
+            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+            className="px-3 py-2 rounded-md bg-white/5 hover:bg-white/6"
+            disabled={currentPage === 1}
+          >
+            Prev
+          </button>
+
+          {Array.from({ length: totalPages }).map((_, i) => {
+            const page = i + 1;
+            return (
+              <button
+                key={page}
+                onClick={() => setCurrentPage(page)}
+                className={`px-3 py-2 rounded-md ${currentPage === page ? 'bg-[#FF7A00] text-black' : 'bg-white/5'}`}
+              >
+                {page}
+              </button>
+            );
+          })}
+
+          <button
+            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+            className="px-3 py-2 rounded-md bg-white/5 hover:bg-white/6"
+            disabled={currentPage === totalPages}
+          >
+            Next
+          </button>
         </div>
       </main>
 
       {/* SUBMIT MODAL */}
-      {modalOpen && (
+      {modalOpen && !selectedStory && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
           <div className="w-full max-w-lg bg-[#0b0b0b] rounded-2xl p-6 border border-neutral-800">
             <div className="flex items-center justify-between mb-4">
@@ -400,6 +420,44 @@ export default function Page() {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* STORY DETAIL MODAL */}
+      {modalOpen && selectedStory && (
+        <div className="fixed inset-0 z-60 flex items-center justify-center bg-black/70 p-4">
+          <div className="w-full max-w-3xl bg-[#0b0b0b] rounded-2xl p-6 border border-neutral-800 overflow-auto max-h-[90vh]">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h3 className="text-2xl font-bold">{selectedStory.name}</h3>
+                <div className="text-sm text-neutral-400">{selectedStory.category} • {selectedStory.date}</div>
+              </div>
+              <div className="ml-auto">
+                <button
+                  onClick={() => { setSelectedStory(null); setModalOpen(false); }}
+                  className="text-neutral-400 hover:text-white"
+                >
+                  ✕
+                </button>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              <div className="md:col-span-1 rounded-lg overflow-hidden bg-neutral-900">
+                <img src={selectedStory.thumb} alt={selectedStory.name} className="w-full h-44 object-cover" />
+              </div>
+              <div className="md:col-span-2 space-y-3">
+                <div className="text-lg text-[#FF7A00] font-semibold">Vision</div>
+                <p className="text-neutral-300">{selectedStory.title}</p>
+
+                <div className="text-lg text-[#FF7A00] font-semibold">About</div>
+                <p className="text-neutral-300">{selectedStory.about}</p>
+
+                <div className="text-lg text-[#FF7A00] font-semibold">Why this vision</div>
+                <p className="text-neutral-300">{selectedStory.background}</p>
+              </div>
+            </div>
           </div>
         </div>
       )}
