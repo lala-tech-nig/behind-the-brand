@@ -181,7 +181,7 @@ export default function HomePage() {
               you or someone you know has a story of resilience, innovation,
               or impact, we want to hear it.
             </p>
-            <Button href="#" className="mt-8">
+            <Button href="/tell-a-story" className="mt-8">
               Want us to cover your story or story of someone you know
             </Button>
           </div>

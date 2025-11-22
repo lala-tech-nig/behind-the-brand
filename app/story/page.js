@@ -1,54 +1,127 @@
 'use client';
 
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import Image from 'next/image';
 import { motion } from 'framer-motion';
 import { Search } from 'lucide-react';
+import StoryCard from '@/components/StoryCard';
 
 export default function StoriesPage() {
-  const allStories = [
-    {
-      id: 1,
-      title: 'The Architect of Tomorrow',
-      author: 'Jane Doe',
-      date: 'Jan 12, 2025',
-      image: '/dangote1.webp',
-      category: 'Innovation',
-    },
-    {
-      id: 2,
-      title: 'Breaking Barriers in Business',
-      author: 'Samuel Ojo',
-      date: 'Feb 02, 2025',
-      image: '/dangote1.webp',
-      category: 'Entrepreneurship',
-    },
-    {
-      id: 3,
-      title: 'The Rise of a Digital Leader',
-      author: 'Fatima Hassan',
-      date: 'Feb 14, 2025',
-      image: '/dangote1.webp',
-      category: 'Technology',
-    },
-  ];
+  const allStories = useMemo(
+    () => [
+      {
+        id: 1,
+        brand: 'MajiPure',
+        person: 'Aisha Bello',
+        title: 'From Borehole to Breakthrough',
+        excerpt:
+          'MajiPure built a distributed water purification network that transformed health outcomes across three regions.',
+        date: 'Jan 12, 2025',
+        image: '/stories/maji-pure.jpg',
+        category: 'Social Impact',
+        trending: true,
+        href: '/story/1',
+      },
+      {
+        id: 2,
+        brand: 'Kadi Studios',
+        person: 'Chinwe Okoro',
+        title: 'Crafting Culture: Kadi’s Local Storytelling',
+        excerpt:
+          'Kadi Studios invests in grassroots filmmakers, turning community stories into international film festival hits.',
+        date: 'Feb 02, 2025',
+        image: '/stories/kadi-studios.jpg',
+        category: 'Culture',
+        trending: false,
+        href: '/story/2',
+      },
+      {
+        id: 3,
+        brand: 'Lagos Ledger',
+        person: 'Tunde Afolabi',
+        title: 'Microcredit, Macro Change',
+        excerpt:
+          'A fintech platform that simplified micro-lending and helped thousands of market traders access capital.',
+        date: 'Feb 14, 2025',
+        image: '/stories/lagos-ledger.jpg',
+        category: 'Finance',
+        trending: true,
+        href: '/story/3',
+      },
+      {
+        id: 4,
+        brand: 'SolLight',
+        person: 'Amina Saleh',
+        title: 'Low-Cost Solar Kits for Off-Grid Homes',
+        excerpt:
+          'SolLight designed resilient, affordable solar kits and trained local technicians to maintain them.',
+        date: 'Mar 02, 2025',
+        image: '/stories/sol-light.jpg',
+        category: 'Energy',
+        trending: false,
+        href: '/story/4',
+      },
+      {
+        id: 5,
+        brand: 'Nuru Health',
+        person: 'Yusuf Bello',
+        title: 'Portable Diagnostics for Remote Clinics',
+        excerpt:
+          'Nuru’s portable diagnostic kits lowered misdiagnosis rates and sped treatment in rural clinics.',
+        date: 'Mar 22, 2025',
+        image: '/stories/nuru-health.jpg',
+        category: 'Health',
+        trending: false,
+        href: '/story/5',
+      },
+      {
+        id: 6,
+        brand: 'Canvas Collective',
+        person: 'Fatima R.',
+        title: 'Turning Local Craft into Global Design',
+        excerpt:
+          'Canvas Collective connected artisans to global markets while preserving traditional techniques and fair pay.',
+        date: 'Apr 11, 2025',
+        image: '/stories/canvas-collective.jpg',
+        category: 'Design',
+        trending: true,
+        href: '/story/6',
+      },
+    ],
+    []
+  );
 
-  const categories = ['All', 'Innovation', 'Entrepreneurship', 'Technology'];
+  const categories = useMemo(() => {
+    const set = new Set(allStories.map((s) => s.category));
+    return ['All', ...Array.from(set)];
+  }, [allStories]);
 
   const [searchQuery, setSearchQuery] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
-  const [visibleCount, setVisibleCount] = useState(6);
+  // pagination
+  const [pageSize] = useState(6);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredStories = allStories.filter((story) => {
+    const q = searchQuery.trim().toLowerCase();
     const matchesSearch =
-      story.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      story.author.toLowerCase().includes(searchQuery.toLowerCase());
+      !q ||
+      story.title.toLowerCase().includes(q) ||
+      story.person.toLowerCase().includes(q) ||
+      story.brand.toLowerCase().includes(q);
 
-    const matchesCategory =
-      activeCategory === 'All' || story.category === activeCategory;
+    const matchesCategory = activeCategory === 'All' || story.category === activeCategory;
 
     return matchesSearch && matchesCategory;
   });
+
+  // reset page when search or filter changes
+  useMemo(() => setCurrentPage(1), [searchQuery, activeCategory]);
+
+  // featured: pick first 4 (or trending ones)
+  const featured = allStories.filter((s) => s.trending).slice(0, 4).length
+    ? allStories.filter((s) => s.trending)
+    : allStories.slice(0, 4);
 
   return (
     <div className="min-h-screen bg-black text-white pb-20">
@@ -57,11 +130,11 @@ export default function StoriesPage() {
         <motion.h1
           initial={{ opacity: 0, y: 40 }}
           animate={{ opacity: 1, y: 0 }}
-          className="text-4xl md:text-6xl font-extrabold text-orange-500"
+          className="text-4xl md:text-6xl font-extrabold text-[#FF7A00]"
         >
           Stories Behind The Brand
         </motion.h1>
-        <p className="mt-4 text-gray-300 max-w-2xl mx-auto">
+        <p className="mt-4 text-neutral-300 max-w-2xl mx-auto">
           Discover powerful stories of resilience, creativity, failure, glory,
           and the journey behind every successful brand.
         </p>
@@ -72,26 +145,26 @@ export default function StoriesPage() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 mb-10">
           {/* SEARCH */}
           <div className="relative w-full md:w-1/2">
-            <Search className="absolute top-3 left-3 text-gray-400" size={20} />
+            <Search className="absolute top-3 left-3 text-neutral-500" size={20} />
             <input
               type="text"
-              placeholder="Search stories..."
+              placeholder="Search stories by person, brand or title..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full bg-neutral-900 border border-neutral-700 rounded-lg pl-10 pr-4 py-3 text-sm focus:border-orange-500 outline-none"
+              className="w-full bg-neutral-900 border border-neutral-700 rounded-lg pl-10 pr-4 py-3 text-sm focus:border-[#FF7A00] outline-none"
             />
           </div>
 
           {/* CATEGORY FILTER */}
-          <div className="flex gap-3 overflow-x-auto scrollbar-none">
+          <div className="flex justify-center gap-3 mb-4 md:mb-0">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setActiveCategory(cat)}
-                className={`px-4 py-2 rounded-full text-sm transition ${
+                className={`py-2 px-4 rounded-md text-sm font-medium ${
                   activeCategory === cat
-                    ? 'bg-orange-500 text-black font-bold'
-                    : 'bg-neutral-800 text-gray-400 hover:bg-neutral-700'
+                    ? 'bg-[#FF7A00] text-black shadow-md'
+                    : 'bg-surface text-text-secondary hover:bg-white/5'
                 }`}
               >
                 {cat}
@@ -101,77 +174,72 @@ export default function StoriesPage() {
         </div>
 
         {/* FEATURED STORIES CAROUSEL */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          className="mb-16"
-        >
-          <h2 className="text-2xl font-bold mb-6 text-orange-500">
-            Featured Stories
-          </h2>
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} className="mb-16">
+          <h2 className="text-2xl font-bold mb-6 text-[#FF7A00]">Featured Stories</h2>
 
           <div className="flex gap-6 overflow-x-auto scrollbar-none pb-4">
-            {allStories.map((story, index) => (
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                key={story.id}
-                className="min-w-[300px] bg-neutral-900 rounded-xl overflow-hidden border border-neutral-800"
-              >
-                <div className="relative h-40 w-full">
-                  <Image
-                    src={story.image}
-                    alt={story.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-lg">{story.title}</h3>
-                  <p className="text-gray-400 text-sm mt-1">{story.author}</p>
-                  <span className="text-xs text-gray-500">{story.date}</span>
-                </div>
-              </motion.div>
+            {featured.map((story) => (
+              <div key={story.id} className="min-w-[260px] sm:min-w-[300px]">
+                <StoryCard
+                  category={story.category}
+                  title={`${story.brand}: ${story.title}`}
+                  excerpt={story.excerpt}
+                  imageUrl={story.image}
+                  href={story.href}
+                  trending={story.trending}
+                  author={story.person}
+                />
+              </div>
             ))}
           </div>
         </motion.div>
 
         {/* STORIES GRID */}
-        <div className="grid md:grid-cols-3 gap-10">
-          {filteredStories.slice(0, visibleCount).map((story, index) => (
-            <motion.a
-              href={`/story/${story.id}`}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+          {filteredStories.slice((currentPage - 1) * pageSize, currentPage * pageSize).map((story) => (
+            <StoryCard
               key={story.id}
-              initial={{ opacity: 0, y: 40 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className="bg-neutral-900 rounded-xl border border-neutral-800 overflow-hidden hover:scale-[1.03] transition transform block"
-            >
-              <div className="relative h-48 w-full">
-                <Image
-                  src={story.image}
-                  alt={story.title}
-                  fill
-                  className="object-cover"
-                />
-              </div>
-
-              <div className="p-5">
-                <h3 className="font-bold text-lg">{story.title}</h3>
-                <p className="text-gray-400 text-sm">{story.author}</p>
-                <span className="text-xs text-gray-500">{story.date}</span>
-              </div>
-            </motion.a>
+              category={story.category}
+              title={`${story.brand}: ${story.title}`}
+              excerpt={story.excerpt}
+              imageUrl={story.image}
+              href={story.href}
+              trending={story.trending}
+              author={story.person}
+            />
           ))}
         </div>
 
-        {/* LOAD MORE */}
-        {visibleCount < filteredStories.length && (
-          <div className="text-center mt-12">
+        {/* PAGINATION */}
+        {filteredStories.length > pageSize && (
+          <div className="mt-10 flex items-center justify-center gap-2 flex-wrap">
             <button
-              onClick={() => setVisibleCount(visibleCount + 6)}
-              className="px-6 py-3 rounded-full bg-orange-500 text-black font-bold hover:bg-orange-600 transition"
+              onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+              className={`px-3 py-2 rounded-md ${currentPage === 1 ? 'bg-white/6 text-white/60' : 'bg-white/5'}`}
+              disabled={currentPage === 1}
             >
-              Load More
+              Prev
+            </button>
+
+            {Array.from({ length: Math.ceil(filteredStories.length / pageSize) }).map((_, i) => {
+              const page = i + 1;
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`px-3 py-2 rounded-md ${currentPage === page ? 'bg-[#FF7A00] text-black' : 'bg-white/5 text-white'} `}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(Math.ceil(filteredStories.length / pageSize), p + 1))}
+              className={`px-3 py-2 rounded-md ${currentPage === Math.ceil(filteredStories.length / pageSize) ? 'bg-white/6 text-white/60' : 'bg-white/5'}`}
+              disabled={currentPage === Math.ceil(filteredStories.length / pageSize)}
+            >
+              Next
             </button>
           </div>
         )}

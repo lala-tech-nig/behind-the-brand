@@ -29,44 +29,41 @@ export default function StoryPage() {
   const authorName = "Jane Doe";
 
   return (
-    <div className="container mx-auto max-w-7xl">
-      <div className="grid grid-cols-1 lg:grid-cols-4">
-        {/* === Column 1: Sticky Sidebar === */}
-        <div className="lg:col-span-1">
-          <StorySidebar storyTitle={storyTitle} authorName={authorName} />
+    <div className="container mx-auto max-w-7xl px-4 sm:px-6">
+      <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
+        {/* Sidebar: appears after main on mobile, sticky on desktop */}
+        <div className="lg:col-span-1 order-2 lg:order-1">
+          <div className="lg:sticky lg:top-20">
+            <StorySidebar storyTitle={storyTitle} authorName={authorName} />
+          </div>
         </div>
 
-        {/* === Column 2: Main Content === */}
-        <div className="lg:col-span-3">
+        {/* Main content */}
+        <div className="lg:col-span-3 order-1 lg:order-2">
           {/* Hero Image */}
-          <div className="relative w-full h-[60vh] rounded-lg overflow-hidden">
+          <div className="relative w-full h-[50vh] sm:h-[60vh] md:h-[70vh] rounded-lg overflow-hidden">
             <Image
-              src="/dangote1.webp" // Add a hero image to your /public folder
+              src="/dangote1.webp"
               alt={storyTitle}
-              layout="fill"
-              objectFit="cover"
-              className="opacity-40"
+              fill
+              className="object-cover opacity-60"
             />
             <div className="absolute inset-0 bg-gradient-to-t from-background to-transparent"></div>
-            <div className="absolute bottom-12 left-12 p-4">
-              <h1 className="text-5xl md:text-7xl font-extrabold text-text-primary">
+            <div className="absolute bottom-6 left-4 sm:bottom-12 sm:left-12 p-4 sm:p-6 max-w-full sm:max-w-lg">
+              <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-text-primary leading-tight">
                 {storyTitle}
               </h1>
-              <p className="mt-4 text-xl text-text-secondary max-w-lg">
+              <p className="mt-3 text-base sm:text-lg text-text-secondary max-w-lg">
                 How Jane Doe built an empire from a garage, a dream, and a
                 soldering iron.
               </p>
             </div>
           </div>
 
-          {/* Article Body:
-              Note how each <section> has an 'id' that
-              matches the 'id' in the sidebar's 'sections' array.
-          */}
-          <article className="prose prose-invert prose-lg max-w-none p-12 text-text-secondary">
-            
+          {/* Article Body: responsive padding and typography */}
+          <article className="prose prose-invert prose-lg max-w-none p-6 sm:p-12 text-text-secondary">
             <section id="introduction">
-              <h2 className="text-3xl font-bold text-text-primary">Introduction</h2>
+              <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Introduction</h2>
               <p>
                 The story begins not in a boardroom, but in a cluttered garage,
                 filled with the scent of solder and the hum of ambitious
@@ -78,9 +75,9 @@ export default function StoryPage() {
               </p>
             </section>
 
-            <section id="early-days" className="mt-16">
-              <h2 className="text-3xl font-bold text-text-primary">The Early Days</h2>
-              <p>
+            <section id="early-days" className="mt-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">The Early Days</h2>
+              <p className="mt-2">
                 In those formative years, every day was a battle against
                 constraints. Resources were scarce, the timelines were brutal,
                 and the path forward was anything but clear. Yet, within this
@@ -100,22 +97,22 @@ export default function StoryPage() {
                 answer="It was when we almost ran out of funding. We had 48 hours to convince one last investor. That desperation, that focus... it's a clarifying force. We got the investment, but more importantly, we found our true grit."
               />
             </section>
-            
+
             {/* Add more sections for 'advice', 'building', and 'conclusion' */}
-            
-            <section id="advice" className="mt-16">
-                <h2 className="text-3xl font-bold text-text-primary">Advice for the Upcoming</h2>
-                <p>...</p>
+
+            <section id="advice" className="mt-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Advice for the Upcoming</h2>
+              <p className="mt-2">...</p>
             </section>
 
-            <section id="building" className="mt-16">
-                <h2 className="text-3xl font-bold text-text-primary">Building the Empire</h2>
-                <p>...</p>
+            <section id="building" className="mt-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Building the Empire</h2>
+              <p className="mt-2">...</p>
             </section>
 
-            <section id="conclusion" className="mt-16">
-                <h2 className="text-3xl font-bold text-text-primary">Conclusion</h2>
-                <p>...</p>
+            <section id="conclusion" className="mt-12">
+              <h2 className="text-2xl sm:text-3xl font-bold text-text-primary">Conclusion</h2>
+              <p className="mt-2">...</p>
             </section>
 
           </article>

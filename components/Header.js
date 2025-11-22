@@ -14,7 +14,7 @@ export default function Header() {
     { name: 'Stories', href: '/story' },
     { name: 'Visions', href: '/vision' },
     { name: 'About', href: '/about' },
-    { name: 'Tell a Story', href: '#' },
+    { name: 'Tell a Story', href: '/tell-a-story' },
     { name: 'Histories', href: '/history' },
     { name: 'Documentaries', href: '/documentary' },
   ];
